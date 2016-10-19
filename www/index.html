@@ -61,7 +61,12 @@
                         Distance:
                         <label class="item item-input">
                             <input ng-model="run.miles" type="text" placeholder="Miles">
-                        </label>                        
+                        </label> 
+                        Location:
+                        <label class="item item-input">
+                            {{run.address.data.results[0].address_components[1].long_name}}
+                        </label>  
+                        <div #map id="formMap"></div>                      
                         <button type="submit" class="button button-block button-positive">Create Run</button>
                     </div>
                 </form>

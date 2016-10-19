@@ -25,9 +25,9 @@ angular.module('run', ['ionic'])
 
 .controller('main', function ($scope, $ionicModal, $http) {
   var map;
+  var formMap;
   var currentLocation;
   var api = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
-  initMap();
   $ionicModal.fromTemplateUrl('schRun.html', {
     scope: $scope,
     animation: 'slide-in-up'
@@ -35,6 +35,7 @@ angular.module('run', ['ionic'])
       $scope.newTaskModal = modal;
       $scope.run = {};
       // $scope.newTaskModal.show();
+      initMap();
   });
   //add marker for current user location
   function addCurrentLocMarker(pos){
@@ -79,18 +80,25 @@ angular.module('run', ['ionic'])
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         clickableIcons:false
       });
+      
 
       google.maps.event.addListener(map, "click", function(event){
-        currentLocation = event.latLng;
-        console.log(currentLocation);
-        var url = api+currentLocation.lat()+","+currentLocation.lng();
-        console.log(url);
-        $http.get(url).then(function(data){
-          $scope.run.address = data;
           $scope.newTaskModal.show();
-        },function(){
-          $scope.run.address = null;
-        })
+          formMap = new google.maps.Map(document.getElementById('formMap'), {
+            zoom: 16,
+            center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            clickableIcons:false
+          });
+          google.maps.event.addListener(formMap, "click", function(event){
+            currentLocation = event.latLng;
+            var url = api+currentLocation.lat()+","+currentLocation.lng();
+            $http.get(url).then(function(data){
+              $scope.run.address = data;
+            },function(){
+              $scope.run.address = null;
+            })
+          });
       });
     },function(err) {
       console.log(err);
